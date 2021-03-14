@@ -26,6 +26,6 @@ class TasmotaSocket(ActorBase):
         self.send(self.onCommand)
 
     def off(self):
-        self.send(self.onCommand)
+        self.send(self.offCommand)
 
 
