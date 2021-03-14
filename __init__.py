@@ -8,24 +8,19 @@ import base64
 @cbpi.actor
 class WIFISocket(ActorBase):
 
-    b_user = Property.Text("User", configurable=True, default_value="admin" )
-    c_password = Property.Text("Password", configurable=True, default_value="")
     a_url = Property.Text("Url", configurable=True, default_value="http://")
     # Command so swtich wifi socket on
-    onCommand = '<?xml version="1.0" encoding="utf-8"?><SMARTPLUG id="edimax"><CMD id="setup"><Device.System.Power.State>ON</Device.System.Power.State></CMD></SMARTPLUG>'
+    onCommand = "cm?cmnd=Power%20On"
     # Command so swtich wifi socket off
-    offCommand = '<?xml version="1.0" encoding="utf-8"?><SMARTPLUG id="edimax"><CMD id="setup"><Device.System.Power.State>OFF</Device.System.Power.State></CMD></SMARTPLUG>'
+    offCommand = "cm?cmnd=Power%20Off"
 
     def send(self,  command):
         try:
-            h = httplib2.Http(".cache")
-            auth = base64.encodestring( "%s:%s" % (self.b_user, self.c_password) )
-            headers = {'content-type': 'application/x-www-form-urlencoded', 'Authorization' : 'Basic ' + auth}
+            h = httplib2.Http()
             ## Sending http command ""
-            h.add_credentials( self.b_user, self.c_password)
-            (resp_headers, content) = h.request("%s/smartplug.cgi" % (self.a_url), "POST",  body=command, headers=headers)
+            content = h.request("%s/%s" % (self.a_url, command), "GET")[1]
         except Exception as e:
-            self.api.app.logger.error("FAIELD to switch WIFI socket %s User: %s" % (self.url, self.user))
+            self.api.app.logger.error("FAIELD to switch Tasmota socket %s Command: %s" % (self.url, command))
 
     def on(self, power=100):
         self.send(self.onCommand)
