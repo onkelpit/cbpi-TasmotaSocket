@@ -6,7 +6,7 @@ from flask import request
 import base64
 
 @cbpi.actor
-class WIFISocket(ActorBase):
+class TasmotaSocket(ActorBase):
 
     a_url = Property.Text("Url", configurable=True, default_value="http://")
     # Command so swtich wifi socket on
