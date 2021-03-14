@@ -8,19 +8,19 @@ import base64
 @cbpi.actor
 class TasmotaSocket(ActorBase):
 
-    a_url = Property.Text("Url", configurable=True, default_value="http://")
+    host = Property.Text("IP or DNS Name", configurable=True, default_value="10.0.2.153")
     # Command so swtich wifi socket on
-    onCommand = "cm?cmnd=Power%20On"
+    onCommand = "On"
     # Command so swtich wifi socket off
-    offCommand = "cm?cmnd=Power%20Off"
+    offCommand = "Off"
 
     def send(self,  command):
         try:
             h = httplib2.Http()
             ## Sending http command ""
-            content = h.request("%s/%s" % (self.a_url, command), "GET")[1]
+            content = h.request("http://%s/cm?cmnd=Power%20%s" % (self.host, command), "GET")[1]
         except Exception as e:
-            self.api.app.logger.error("FAIELD to switch Tasmota socket %s Command: %s" % (self.url, command))
+            self.api.app.logger.error("FAIELD to switch Tasmota socket %s Command: %s" % (self.host, command))
 
     def on(self, power=100):
         self.send(self.onCommand)
